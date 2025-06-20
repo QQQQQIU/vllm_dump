@@ -443,6 +443,10 @@ class FlashAttentionImpl(AttentionImpl):
         # Whenever making a change in this method, please benchmark the
         # performance to make sure it does not introduce any overhead.
 
+        print(f"[DUMP FlashAttentionImpl] 输入 query shape: {query.shape}, dtype: {query.dtype} (num_tokens, num_heads, head_size)")
+        print(f"[DUMP FlashAttentionImpl] 输入 key shape: {key.shape}, dtype: {key.dtype} (num_tokens, num_kv_heads, head_size)")
+        print(f"[DUMP FlashAttentionImpl] 输入 value shape: {value.shape}, dtype: {value.dtype} (num_tokens, num_kv_heads, head_size)")
+        print(f"[DUMP FlashAttentionImpl] 输入 kv_cache shape: {kv_cache.shape}, dtype: {kv_cache.dtype} (2, num_blocks, block_size, num_kv_heads, head_size)")
         num_actual_tokens = attn_metadata.num_actual_tokens
         key_cache, value_cache = kv_cache.unbind(0)
 
@@ -520,6 +524,8 @@ class FlashAttentionImpl(AttentionImpl):
                 k_descale=layer._k_scale.expand(descale_shape),
                 v_descale=layer._v_scale.expand(descale_shape),
             )
+            print(f"[DUMP FlashAttentionImpl] 输出 output shape use_local_attn: {output.shape}, dtype: {output.dtype} [num_tokens, num_heads * head_size]")
+            print("----------------------------------------")
             return output
 
         assert not use_local_attn, (
@@ -549,6 +555,8 @@ class FlashAttentionImpl(AttentionImpl):
             k_descale=layer._k_scale,
             v_descale=layer._v_scale,
         )
+        print(f"[DUMP FlashAttentionImpl] 输出 output shape cascade_attention: {output.shape}, dtype: {output.dtype} [num_tokens, num_heads * head_size]")
+        print("----------------------------------------")
         return output
 
 
