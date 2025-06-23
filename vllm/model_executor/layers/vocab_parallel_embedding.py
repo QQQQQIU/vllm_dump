@@ -404,6 +404,7 @@ class VocabParallelEmbedding(torch.nn.Module):
             param[loaded_weight.shape[0]:].data.fill_(0)
 
     def forward(self, input_):
+        print(f"[DUMP VocabParallelEmbedding] 输入input_ shape: {input_.shape}, dtype: {input_.dtype}")
         if self.tp_size > 1:
             # Build the mask.
             masked_input, input_mask = get_masked_input_and_mask(
@@ -422,6 +423,8 @@ class VocabParallelEmbedding(torch.nn.Module):
             output_parallel.masked_fill_(input_mask.unsqueeze(-1), 0)
         # Reduce across all the model parallel GPUs.
         output = tensor_model_parallel_all_reduce(output_parallel)
+        print(f"[DUMP VocabParallelEmbedding] 输出output shape: {output.shape}, dtype: {output.dtype}")
+        print("[DUMP]----------------------------------------")
         return output
 
     def extra_repr(self) -> str:
@@ -483,5 +486,6 @@ class ParallelLMHead(VocabParallelEmbedding):
             return self
 
     def forward(self, input_):
+        print(f"[DUMP ParallelLMHead] 输入input_ shape: {input_.shape}, dtype: {input_.dtype}")
         del input_
         raise RuntimeError("LMHead's weights should be used in the sampler.")

@@ -480,6 +480,7 @@ class ColumnParallelLinear(LinearBase):
     def forward(
         self, input_
     ) -> Union[torch.Tensor, tuple[torch.Tensor, Optional[Parameter]]]:
+        print(f"[DUMP ColumnParallelLinear Called by: {type(self).__name__}] 输入input_ shape: {input_.shape}, dtype: {input_.dtype} ")
         bias = self.bias if not self.skip_bias_add else None
 
         # Matrix multiply.
@@ -492,7 +493,13 @@ class ColumnParallelLinear(LinearBase):
             output = output_parallel
         output_bias = self.bias if self.skip_bias_add else None
         if not self.return_bias:
+            print(f"[DUMP ColumnParallelLinear Called by: {type(self).__name__}] 输出output shape: {output.shape}, dtype: {output.dtype} ")
+            print("[DUMP]----------------------------------------")
             return output
+        print(f"[DUMP ColumnParallelLinear Called by: {type(self).__name__}] 输出output shape: {output.shape}, dtype: {output.dtype} ")
+        if output_bias is not None:
+            print(f"[DUMP ColumnParallelLinear Called by: {type(self).__name__}] 输出output_bias shape: {output_bias.shape}, dtype: {output_bias.dtype} ")
+        print("[DUMP]----------------------------------------")
         return output, output_bias
 
     def extra_repr(self) -> str:
@@ -1273,6 +1280,7 @@ class RowParallelLinear(LinearBase):
     def forward(
         self, input_
     ) -> Union[torch.Tensor, tuple[torch.Tensor, Optional[Parameter]]]:
+        print(f"[DUMP RowParallelLinear] 输入input_ shape: {input_.shape}, dtype: {input_.dtype} ")
         if self.input_is_parallel:
             input_parallel = input_
         else:
@@ -1297,7 +1305,13 @@ class RowParallelLinear(LinearBase):
         output_bias = self.bias if self.skip_bias_add else None
 
         if not self.return_bias:
+            print(f"[DUMP RowParallelLinear] 输出output shape: {output.shape}, dtype: {output.dtype} ")
+            print("[DUMP]----------------------------------------")
             return output
+        print(f"[DUMP RowParallelLinear] 输出output shape: {output.shape}, dtype: {output.dtype} ")
+        if output_bias is not None:
+            print(f"[DUMP RowParallelLinear] 输出output_bias shape: {output_bias.shape}, dtype: {output_bias.dtype} ")
+        print("[DUMP]----------------------------------------")
         return output, output_bias
 
     def extra_repr(self) -> str:

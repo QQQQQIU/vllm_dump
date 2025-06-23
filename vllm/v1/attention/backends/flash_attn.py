@@ -525,7 +525,7 @@ class FlashAttentionImpl(AttentionImpl):
                 v_descale=layer._v_scale.expand(descale_shape),
             )
             print(f"[DUMP FlashAttentionImpl] 输出 output shape use_local_attn: {output.shape}, dtype: {output.dtype} [num_tokens, num_heads * head_size]")
-            print("----------------------------------------")
+            print("[DUMP]----------------------------------------")
             return output
 
         assert not use_local_attn, (
@@ -556,7 +556,7 @@ class FlashAttentionImpl(AttentionImpl):
             v_descale=layer._v_scale,
         )
         print(f"[DUMP FlashAttentionImpl] 输出 output shape cascade_attention: {output.shape}, dtype: {output.dtype} [num_tokens, num_heads * head_size]")
-        print("----------------------------------------")
+        print("[DUMP]----------------------------------------")
         return output
 
 

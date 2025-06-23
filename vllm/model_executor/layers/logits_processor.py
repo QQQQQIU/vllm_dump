@@ -60,6 +60,7 @@ class LogitsProcessor(nn.Module):
         sampling_metadata: Optional[SamplingMetadata] = None,
         embedding_bias: Optional[torch.Tensor] = None,
     ) -> Optional[torch.Tensor]:
+        print(f"[DUMP LogitsProcessor] 输入hidden_states shape: {hidden_states.shape}, dtype: {hidden_states.dtype}")
         if self.logits_as_input:
             logits = hidden_states
         else:
@@ -83,6 +84,8 @@ class LogitsProcessor(nn.Module):
                 sampling_metadata.seq_groups is not None:
                 logits = _apply_logits_processors(logits, sampling_metadata)
 
+        print(f"[DUMP LogitsProcessor] 输出logits shape: {logits.shape}, dtype: {logits.dtype}")
+        print("[DUMP]----------------------------------------")
         return logits
 
     def _gather_logits(self, logits: torch.Tensor) -> torch.Tensor:

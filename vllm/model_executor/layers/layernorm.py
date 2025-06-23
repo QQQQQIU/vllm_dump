@@ -27,6 +27,8 @@ def rms_norm(x: torch.Tensor, weight: torch.Tensor,
         weight,
         variance_epsilon,
     )
+    print(f"[DUMP RMSNorm rms_norm] 输出out shape: {out.shape}, dtype: {out.dtype} ")
+    print("[DUMP]----------------------------------------")
     return out
 
 
@@ -40,6 +42,9 @@ def fused_add_rms_norm(
         weight,
         variance_epsilon,
     )
+    print(f"[DUMP RMSNorm fused_add_rms_norm] 输出x shape: {x.shape}, dtype: {x.dtype} ")
+    print(f"[DUMP RMSNorm fused_add_rms_norm] 输出residual shape: {residual.shape}, dtype: {residual.dtype} ")
+    print("[DUMP]----------------------------------------")
     return x, residual
 
 
@@ -149,8 +154,13 @@ class RMSNorm(CustomOp):
         if self.has_weight:
             x = x * self.weight
         if residual is None:
+            print(f"[DUMP RMSNorm forward_native] 输出x shape: {x.shape}, dtype: {x.dtype} x.to(torch.float32)->x.to(orig_dtype)")
+            print("[DUMP]----------------------------------------")
             return x
         else:
+            print(f"[DUMP RMSNorm forward_native] 输出x shape: {x.shape}, dtype: {x.dtype} x.to(torch.float32)->x.to(orig_dtype)")
+            print(f"[DUMP RMSNorm forward_native] 输出residual shape: {residual.shape}, dtype: {residual.dtype} residual.to(torch.float32)->residual.to(orig_dtype)")
+            print("[DUMP]----------------------------------------")
             return x, residual
 
     def forward_cuda(
@@ -158,16 +168,21 @@ class RMSNorm(CustomOp):
         x: torch.Tensor,
         residual: Optional[torch.Tensor] = None,
     ) -> Union[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        print(f"[DUMP RMSNorm] 输入x shape: {x.shape}, dtype: {x.dtype} ")
         if self.variance_size_override is not None:
+            print(f"[DUMP RMSNorm] 输入residual shape: {residual.shape}, dtype: {residual.dtype} ")
             return self.forward_native(x, residual)
 
         add_residual = residual is not None
         norm_func = dispatch_cuda_rmsnorm_func(add_residual)
 
         if add_residual:
+            print(f"[DUMP RMSNorm] 输入residual shape: {residual.shape}, dtype: {residual.dtype} ")
+            print(f"[DUMP RMSNorm] 输入weight shape: {self.weight.data.shape}, dtype: {self.weight.data.dtype} ")
             return norm_func(x, residual, self.weight.data,
                              self.variance_epsilon)
         else:
+            print(f"[DUMP RMSNorm] 输入weight shape: {self.weight.data.shape}, dtype: {self.weight.data.dtype} ")
             return norm_func(x, self.weight.data, self.variance_epsilon)
 
     def forward_hpu(

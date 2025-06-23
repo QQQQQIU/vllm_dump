@@ -83,7 +83,7 @@ class SiluAndMul(CustomOp):
         out = torch.empty(output_shape, dtype=x.dtype, device=x.device)
         self.op(out, x)
         print(f"[DUMP SiluAndMul] 输出out shape: {out.shape}, dtype: {out.dtype} (num_tokens, d) or (batch_size, seq_len, d)")
-        print("----------------------------------------")
+        print("[DUMP]----------------------------------------")
         return out
 
     def forward_xpu(self, x: torch.Tensor) -> torch.Tensor:

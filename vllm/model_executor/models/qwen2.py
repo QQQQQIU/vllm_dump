@@ -179,7 +179,13 @@ class Qwen2Attention(nn.Module):
     ) -> torch.Tensor:
         qkv, _ = self.qkv_proj(hidden_states)
         q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+        print(f"[DUMP rotary_emb] 输入positions shape: {positions.shape}, dtype: {positions.dtype}")
+        print(f"[DUMP rotary_emb] 输入q shape: {q.shape}, dtype: {q.dtype}")
+        print(f"[DUMP rotary_emb] 输入k shape: {k.shape}, dtype: {k.dtype}")
         q, k = self.rotary_emb(positions, q, k)
+        print(f"[DUMP rotary_emb] 输出q shape: {q.shape}, dtype: {q.dtype}")
+        print(f"[DUMP rotary_emb] 输出k shape: {k.shape}, dtype: {k.dtype}")
+        print("[DUMP]----------------------------------------")
         attn_output = self.attn(q, k, v)
         output, _ = self.o_proj(attn_output)
         return output
